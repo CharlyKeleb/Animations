@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:test_project/battery/battery.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class BatteryHomePage extends StatefulWidget {
+  const BatteryHomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _BatteryHomePageState createState() => _BatteryHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BatteryHomePageState extends State<BatteryHomePage> {
   bool transition = false;
 
   startTimeout() {
@@ -33,7 +33,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
+        duration: const Duration(
+          seconds: 1,
+        ),
         child: transition
             ? const Battery()
             : Center(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:test_project/home.dart';
+import 'package:test_project/battery/home.dart';
+import 'package:test_project/squidgame/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,10 +21,11 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.black,
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+
+      //Home page for the battery animation
+      // home: BatteryHomePage(),
+
+      home: const SquidGameHome(),
     );
   }
 }
-
-
-
