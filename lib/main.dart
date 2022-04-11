@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:test_project/battery/home.dart';
+import 'package:test_project/chess/chess.dart';
+import 'package:test_project/chess/home.dart';
 import 'package:test_project/squidgame/home.dart';
 
 void main() {
@@ -22,10 +24,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
 
-      //Home page for the battery animation
+      ///Home page for the battery animation
       // home: BatteryHomePage(),
 
-      home: const SquidGameHome(),
+      ///Home page for squid game onboard screen
+
+      // home: const SquidGameHome(),
+      home: const Home(),
     );
   }
 }
