@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProgressButton extends StatefulWidget {
@@ -33,6 +34,7 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
               border: Border.all(color: Colors.red, width: 3.0),
               borderRadius: BorderRadius.circular(50.0),
             ),
+            child: const  Icon(CupertinoIcons.search),
           ),
         ),
       ),

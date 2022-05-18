@@ -5,14 +5,14 @@ import 'package:test_project/chess/chess_loading_spinner.dart';
 import 'package:test_project/chess/shake_animation.dart';
 import 'package:test_project/utils/extensions.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class ChessHome extends StatefulWidget {
+  const ChessHome({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<ChessHome> createState() => _ChessHomeState();
 }
 
-class _HomeState extends State<Home> {
+class _ChessHomeState extends State<ChessHome> {
   bool transition = false;
 
   @override
@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
                       const Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20.0,
-                          vertical: 150.0,
+                          vertical: 120.0,
                         ),
                         child: Text(
                           'WANNA BE THE\nKING OF\nCHESS',
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 60.0),
+                      const SizedBox(height: 40.0),
                       Center(
                         child: Container(
                           height: 45.0,

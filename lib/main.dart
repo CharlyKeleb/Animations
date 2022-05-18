@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:test_project/androidlogo/home.dart';
+import 'package:test_project/androidlogo/splash.dart';
 
 import 'package:test_project/battery/home.dart';
 import 'package:test_project/chess/chess.dart';
 import 'package:test_project/chess/home.dart';
+import 'package:test_project/cup/cup.dart';
 import 'package:test_project/squidgame/home.dart';
 
 void main() {
@@ -26,11 +29,12 @@ class MyApp extends StatelessWidget {
 
       ///Home page for the battery animation
       // home: BatteryHomePage(),
-
       ///Home page for squid game onboard screen
-
       // home: const SquidGameHome(),
-      home: const Home(),
+      ///Home page for chess animation
+      // home: const ChessHome(),
+      ///Home page for android logo animation
+      home: const AndroidSplash(),
     );
   }
 }
