@@ -6,7 +6,7 @@ extension AnimatedWidgetExtension on Widget {
     double offset = 50.0;
     return AnimationConfiguration.staggeredList(
       position: index,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 800),
       child: SlideAnimation(
         horizontalOffset: isVertical ? 0.0 : offset,
         verticalOffset: !isVertical ? 0.0 : offset,

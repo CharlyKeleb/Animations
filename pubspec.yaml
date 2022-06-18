@@ -37,6 +37,10 @@ dependencies:
   lottie: ^1.2.2
   flutter_staggered_animations: ^1.0.0
   flutter_chess_board: ^1.0.1
+  sizer: ^2.0.15
+  google_fonts: ^3.0.1
+  dev_icons: ^1.0.0
+  ionicons: ^0.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:test_project/chess/chess_loading_spinner.dart';
 import 'package:test_project/chess/shake_animation.dart';
