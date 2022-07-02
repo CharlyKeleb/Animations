@@ -10,6 +10,7 @@ import 'package:test_project/chess/home.dart';
 import 'package:test_project/cup/cup.dart';
 import 'package:test_project/card_flip/flip_animation.dart';
 import 'package:test_project/squidgame/home.dart';
+import 'package:test_project/starbucks/home.dart';
 import 'package:test_project/web_ui/pepsi/pepsi.dart';
 
 void main() {
@@ -34,18 +35,20 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        ///Home page for the battery animation
+        //Home page for the battery animation
         // home: BatteryHomePage(),
-        ///Home page for squid game onboard screen
+        //Home page for squid game onboard screen
         // home: const SquidGameHome(),
-        ///Home page for chess animation
+        //Home page for chess animation
         // home: const ChessHome(),
-        ///Home page for android logo animation
+        //Home page for android logo animation
         // home: const AndroidSplash(),
-        ///Home page for flip animation
+        //Home page for flip animation
         // home: FlipAnimation(),
-        ///Home page of the pepi UI(Flutter Web)
-        home: PepsiUi(),
+        //Home page of the pepi UI(Flutter Web)
+        // home: PepsiUi(),
+        //Home page of the animated starbucks cup
+        home: const StarBucks(),
       );
     });
   }
