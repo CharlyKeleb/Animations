@@ -34,7 +34,7 @@ class _PepsiUiState extends State<PepsiUi> {
           ),
         ),
         child: Stack(
-          overflow: Overflow.visible,
+          clipBehavior: Clip.none,
           children: [
             //the big pepsi image
             Positioned(

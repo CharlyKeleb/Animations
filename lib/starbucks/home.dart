@@ -51,7 +51,7 @@ class _StarBucksState extends State<StarBucks> with TickerProviderStateMixin {
     cupAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(cupController!);
     shadowAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(shadowController!);
-    Timer(const Duration(seconds: 1), () {
+    Timer(const Duration(seconds: 2), () {
       cupController!.forward();
       shadowController!.forward();
     });
