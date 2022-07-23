@@ -33,7 +33,9 @@ class _StarBucksState extends State<StarBucks> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     shadowController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
     cupController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     coverController =
@@ -43,7 +45,9 @@ class _StarBucksState extends State<StarBucks> with TickerProviderStateMixin {
     strawController =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
     fadeController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
     filledController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     topController =

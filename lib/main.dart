@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
-import 'package:test_project/starbucks/home.dart';
+import 'package:test_project/wallet/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,21 +24,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-
-        //Home page for the battery animation
-        // home: BatteryHomePage(),
-        //Home page for squid game onboard screen
-        // home: const SquidGameHome(),
-        //Home page for chess animation
-        // home: const ChessHome(),
-        //Home page for android logo animation
-        // home: const AndroidSplash(),
-        //Home page for flip animation
-        // home: FlipAnimation(),
-        //Home page of the pepi UI(Flutter Web)
-        // home: PepsiUi(),
-        //Home page of the animated starbucks cup
-        home: const StarBucks(),
+        home: const WalletHome(),
       );
     });
   }

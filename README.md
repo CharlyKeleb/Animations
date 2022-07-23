@@ -1,6 +1,6 @@
 # Flutter Animations
 
-This project contains list of Animation
+This project contains list of Animation and UIs
 
 ## Getting Started
 
