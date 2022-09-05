@@ -71,7 +71,7 @@ class SquidGameOnboard extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontSize: 20.0,
+                              fontSize: 18.0,
                             ),
                           ),
                         ],

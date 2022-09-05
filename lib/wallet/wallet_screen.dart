@@ -15,7 +15,9 @@ class _WalletScreenState extends State<WalletScreen> {
     QuickLink(title: 'Send', icon: const Icon(Ionicons.repeat_outline)),
     QuickLink(title: 'Bills', icon: const Icon(Ionicons.card_outline)),
     QuickLink(
-        title: 'TopUp', icon: const Icon(Ionicons.phone_portrait_outline)),
+      title: 'TopUp',
+      icon: const Icon(Ionicons.phone_portrait_outline),
+    ),
     QuickLink(title: 'Ticket', icon: const Icon(Ionicons.ticket_outline)),
   ];
 
