@@ -6,6 +6,7 @@ import 'package:test_project/battery/battery.dart';
 import 'package:test_project/battery/home.dart';
 import 'package:test_project/card_flip/flip_animation.dart';
 import 'package:test_project/chess/home.dart';
+import 'package:test_project/github/home.dart';
 import 'package:test_project/squidgame/home.dart';
 import 'package:test_project/squidgame/squidgame_onboard.dart';
 import 'package:test_project/starbucks/home.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-        home:  const WalletHome(),
+        home:  const Github(),
       );
     });
   }
