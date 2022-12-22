@@ -40,6 +40,8 @@ dependencies:
   sizer: ^2.0.15
   google_fonts: ^3.0.1
   ionicons: ^0.1.2
+  flutter_hooks: ^0.18.5+1
+  wave: ^0.2.2
 
 dev_dependencies:
   flutter_test:

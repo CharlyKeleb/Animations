@@ -6,6 +6,7 @@ import 'package:test_project/battery/battery.dart';
 import 'package:test_project/battery/home.dart';
 import 'package:test_project/card_flip/flip_animation.dart';
 import 'package:test_project/chess/home.dart';
+import 'package:test_project/draggable_squares/home.dart';
 import 'package:test_project/github/home.dart';
 import 'package:test_project/squidgame/home.dart';
 import 'package:test_project/squidgame/squidgame_onboard.dart';
@@ -18,7 +19,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,11 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-        home:  const Github(),
+        home: const Home(),
       );
     });
   }
 }
-
 // Apply font to our app's theme
 ThemeData themeData(ThemeData theme) {
   return theme.copyWith(
