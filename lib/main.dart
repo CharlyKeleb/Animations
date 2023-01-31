@@ -8,6 +8,7 @@ import 'package:test_project/card_flip/flip_animation.dart';
 import 'package:test_project/chess/home.dart';
 import 'package:test_project/draggable_squares/home.dart';
 import 'package:test_project/github/home.dart';
+import 'package:test_project/rotating_container/home.dart';
 import 'package:test_project/squidgame/home.dart';
 import 'package:test_project/squidgame/squidgame_onboard.dart';
 import 'package:test_project/starbucks/home.dart';
@@ -33,7 +34,34 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-        home: const Home(),
+        home: const RotationHome(),
+        // home: Scaffold(
+        //   body:  Center(
+        //     child: AnimatedContainer(
+        //             duration: const Duration(microseconds: 50),
+        //             width: 420,
+        //             height: 420,
+        //             decoration: BoxDecoration(
+        //               borderRadius: BorderRadius.all(
+        //                 Radius.circular(300),
+        //               ),
+        //               boxShadow: [
+        //                 BoxShadow(
+        //                   color: const Color(0xFFCE8BF8).withOpacity(0.8),
+        //                   offset: const Offset(-6.0, -6.0),
+        //                   blurRadius: 5.0,
+        //                 ),
+        //                 BoxShadow(
+        //                   color: Colors.black.withOpacity(0.1),
+        //                   offset: const Offset(6.0, 6.0),
+        //                   blurRadius: 16.0,
+        //                 ),
+        //               ],
+        //               color: const Color(0xFFCE8BF8),
+        //             ),
+        //           ),
+        //   ),
+        // ),
       );
     });
   }
