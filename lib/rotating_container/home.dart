@@ -57,13 +57,13 @@ class _RotationHomeState extends State<RotationHome>
                 x = x + details.delta.dy / 100;
               });
             },
-            child: Transform.rotate(
-              angle: _rotationAnimation.value,
-              child: Stack(
-                clipBehavior: Clip.hardEdge,
-                alignment: Alignment.center,
-                children: [
-                  Container(
+            child: Stack(
+              clipBehavior: Clip.hardEdge,
+              alignment: Alignment.center,
+              children: [
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 0.2,
+                  child: Container(
                     width: 400,
                     height: 400,
                     decoration: BoxDecoration(
@@ -85,7 +85,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFF692D94),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 0.4,
+                  child: Container(
                     width: 375,
                     height: 375,
                     decoration: BoxDecoration(
@@ -107,7 +110,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFF7921B1),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 0.6,
+                  child: Container(
                     width: 350,
                     height: 350,
                     decoration: BoxDecoration(
@@ -129,7 +135,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: Colors.purple,
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 0.8,
+                  child: Container(
                     width: 300,
                     height: 300,
                     decoration: BoxDecoration(
@@ -150,7 +159,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: Colors.purple.shade400,
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 1,
+                  child: Container(
                     width: 250,
                     height: 250,
                     decoration: BoxDecoration(
@@ -171,7 +183,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFFBC61F5),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 1.2,
+                  child: Container(
                     width: 200,
                     height: 200,
                     decoration: BoxDecoration(
@@ -192,7 +207,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFFC576F6),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 1.4,
+                  child: Container(
                     width: 150,
                     height: 150,
                     decoration: BoxDecoration(
@@ -213,7 +231,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFFCE8BF8),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 1.6,
+                  child: Container(
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
@@ -234,7 +255,10 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFFE1BEE7),
                     ),
                   ),
-                  Container(
+                ),
+                Transform.rotate(
+                  angle: _rotationAnimation.value + 1.8,
+                  child: Container(
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
@@ -255,8 +279,8 @@ class _RotationHomeState extends State<RotationHome>
                       color: const Color(0xFFF3E5F5),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
