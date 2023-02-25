@@ -28,6 +28,7 @@ class ShakeWidget extends StatelessWidget {
       builder: (context, animation, child) => Transform.translate(
         offset: Offset(deltaX * shake(animation), 0),
         child: child,
+      
       ),
       child: child,
     );

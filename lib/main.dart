@@ -6,8 +6,12 @@ import 'package:test_project/battery/battery.dart';
 import 'package:test_project/battery/home.dart';
 import 'package:test_project/card_flip/flip_animation.dart';
 import 'package:test_project/chess/home.dart';
+import 'package:test_project/discord/discord.dart';
 import 'package:test_project/draggable_squares/home.dart';
+import 'package:test_project/flutter_compass/home.dart';
+import 'package:test_project/flutter_dash/home.dart';
 import 'package:test_project/github/home.dart';
+import 'package:test_project/matrix/home.dart';
 import 'package:test_project/rotating_container/home.dart';
 import 'package:test_project/squidgame/home.dart';
 import 'package:test_project/squidgame/squidgame_onboard.dart';
@@ -29,12 +33,16 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: themeData(
           ThemeData(
+            appBarTheme: const AppBarTheme(
+              elevation:0.0,
+              backgroundColor: Colors.transparent
+            ),
             brightness: Brightness.dark,
             backgroundColor: Colors.black,
             primarySwatch: Colors.blue,
           ),
         ),
-        home: const RotationHome(),
+        home: const CompassHome(),
       );
     });
   }

@@ -95,18 +95,6 @@ class _GithubState extends State<Github> with TickerProviderStateMixin {
       body: Stack(
         alignment: AlignmentDirectional.center,
         children: [
-          // Container(
-          //     height: 200,
-          //     width: 100,
-          //     color: Colors.green,
-          //     child: ShatteringWidget(
-          //       builder: (shatter) => GestureDetector(
-          //           child: Container(height: 40.0,width: 60.0,color: Colors.red,),
-          //           onTap: shatter),
-          //       onShatterCompleted: () {
-          //         print('Completed');
-          //       },
-          //     )),
           CustomPaint(
             size: Size.infinite,
             painter: GithubPainter(
