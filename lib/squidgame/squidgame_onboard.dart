@@ -32,7 +32,7 @@ class SquidGameOnboard extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 25.0,
                   ),
-                ).fadeInList(0,true),
+                ).fadeInList(0, true),
                 const SizedBox(height: 50.0),
                 const Text(
                   'If you can dream it, you can do it!🤩\n Get started with Squid Game today and stand to earn millions💰',
@@ -52,9 +52,10 @@ class SquidGameOnboard extends StatelessWidget {
                     onPressed: () {},
                     style: ButtonStyle(
                       side: MaterialStateProperty.all<BorderSide>(
-                          const BorderSide(
-                        color: Colors.white,
-                      )),
+                        const BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0),

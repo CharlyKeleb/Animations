@@ -11,11 +11,8 @@ class CompassView extends StatefulWidget {
   }) : super(key: key);
 
   final double? bearing;
-
   final double heading;
-
   final Color foregroundColor;
-
   final Color bearingColor;
 
   @override
@@ -26,6 +23,7 @@ class _CompassViewState extends State<CompassView>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _compassAnimation;
+
   @override
   void initState() {
     super.initState();
@@ -262,7 +260,7 @@ class _CompassViewPainter extends CustomPainter {
     const radii = degrees * pi / 180;
     canvas.rotate(radii);
 
-canvas.restore();
+    canvas.restore();
     // paint cardinality text
     for (final cardinality in cardinalities.entries) {
       const majorScaleTextPadding = 100.0;
