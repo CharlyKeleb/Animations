@@ -51,6 +51,7 @@ class _WalletScreenState extends State<WalletScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
         children: [
+
           SizedBox(
             height: 200.0,
             // color: Colors.red,

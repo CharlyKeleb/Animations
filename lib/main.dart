@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
-import 'package:test_project/androidlogo/home.dart';
-import 'package:test_project/battery/battery.dart';
-import 'package:test_project/battery/home.dart';
-import 'package:test_project/card_flip/flip_animation.dart';
-import 'package:test_project/chess/home.dart';
-import 'package:test_project/discord/discord.dart';
-import 'package:test_project/draggable_squares/home.dart';
-import 'package:test_project/flutter_compass/home.dart';
-import 'package:test_project/github/home.dart';
-import 'package:test_project/rotating_container/home.dart';
-import 'package:test_project/squidgame/home.dart';
-import 'package:test_project/squidgame/squidgame_onboard.dart';
-import 'package:test_project/starbucks/home.dart';
-import 'package:test_project/wallet/home.dart';
+import 'package:test_project/gamepad/gamepad.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +28,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-        home: const CompassHome(),
+        home: const GamePad(),
       );
     });
   }

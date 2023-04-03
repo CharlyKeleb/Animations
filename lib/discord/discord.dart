@@ -1,9 +1,6 @@
-import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:test_project/utils/shake_animation.dart';
 import 'package:test_project/utils/extensions.dart';
 import 'package:test_project/utils/type_write.dart';
 
