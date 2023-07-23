@@ -43,6 +43,7 @@ dependencies:
   flutter_hooks: ^0.18.5+1
   wave: ^0.2.2
   flutter_compass: ^0.7.0
+  file: ^6.1.4
 
 dev_dependencies:
   flutter_test:

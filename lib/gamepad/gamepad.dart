@@ -34,7 +34,7 @@ class _GamePadState extends State<GamePad> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     playstationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500));
+        vsync: this, duration: const Duration(milliseconds: 3000));
     leftPsSocketController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1500));
     rightPsSocketController = AnimationController(
@@ -42,11 +42,11 @@ class _GamePadState extends State<GamePad> with TickerProviderStateMixin {
     displayPadController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1500));
     analogController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+        vsync: this, duration: const Duration(milliseconds: 1000));
     volumeController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+        vsync: this, duration: const Duration(milliseconds: 1000));
     opacityController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+        vsync: this, duration: const Duration(milliseconds: 1000));
 
     //animate
     playstationAnimation =

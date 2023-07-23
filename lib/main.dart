@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:test_project/gamepad/gamepad.dart';
+import 'package:test_project/loading_circle/loading_circle.dart';
 
 
 void main() {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
         ),
-        home: const GamePad(),
+        home: const LoadingFaceAnimationScreen(),
       );
     });
   }
