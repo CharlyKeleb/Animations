@@ -10,14 +10,6 @@ class LoadingFaceAnimationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue.shade900.withAlpha(90),
-      // body: SafeArea(
-      //   child: Center(
-      //     child: LoadingFaceAnimation(
-      //       side: 100,
-      //       stopDuration: 3000,
-      //     ),
-      //   ),
-      // ),
       body: Stack(
         fit: StackFit.loose,
         children: [
