@@ -6,6 +6,8 @@ import 'package:test_project/discord/discord.dart';
 import 'package:test_project/flutter_compass/home.dart';
 import 'package:test_project/gamepad/gamepad.dart';
 import 'package:test_project/github/home.dart';
+import 'package:test_project/gradient_spinner/spinner_home.dart';
+import 'package:test_project/parallax_ui/parallax_scroll.dart';
 import 'package:test_project/spongebob/painter.dart';
 import 'package:test_project/starbucks/home.dart';
 
@@ -32,11 +34,11 @@ class MyApp extends StatelessWidget {
               ),
               colorScheme: ColorScheme.fromSwatch(
                 primarySwatch: Colors.blue,
-                brightness: Brightness.dark,
-              ).copyWith(background: Colors.black),
+                brightness: Brightness.light,
+              ).copyWith(background: Colors.white),
             ),
           ),
-          home: const ClockHome(),
+          home:  ParallaxScroll(),
         );
       },
     );
