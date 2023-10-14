@@ -3,11 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:test_project/clock/home.dart';
 import 'package:test_project/discord/discord.dart';
+import 'package:test_project/draggable_squares/home.dart';
 import 'package:test_project/flutter_compass/home.dart';
 import 'package:test_project/gamepad/gamepad.dart';
 import 'package:test_project/github/home.dart';
 import 'package:test_project/gradient_spinner/spinner_home.dart';
+import 'package:test_project/loading_circle/loading_circle.dart';
 import 'package:test_project/parallax_ui/parallax_scroll.dart';
+import 'package:test_project/rotating_container/home.dart';
 import 'package:test_project/spongebob/painter.dart';
 import 'package:test_project/starbucks/home.dart';
 
@@ -35,10 +38,12 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSwatch(
                 primarySwatch: Colors.blue,
                 brightness: Brightness.light,
-              ).copyWith(background: Colors.white),
+              ).copyWith(
+                background: Colors.white,
+              ),
             ),
           ),
-          home:  ParallaxScroll(),
+          home: const ParallaxScroll(),
         );
       },
     );

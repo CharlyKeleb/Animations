@@ -45,6 +45,7 @@ class _RotationHomeState extends State<RotationHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: Transform(
           transform: Matrix4.identity()

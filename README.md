@@ -17,7 +17,15 @@ Star⭐ the repo and follow me if you like what you see😉.
 
 <img src="ss/2.gif" width="200"> <img src="ss/4.gif" width="200">
 
-<img src="ss/5.gif" width="200"> <img src="ss/6.gif" width="200"> 
+<img src="ss/5.gif" width="200"> <img src="ss/6.gif" width="200">
+
+<img src="ss/7.gif" width="200"> <img src="ss/8.gif" width="200"> 
+
+<img src="ss/9.gif" width="200"> <img src="ss/10.gif" width="200"> 
+
+<img src="ss/11.gif" width="200"> <img src="ss/12.gif" width="200"> 
+
+<img src="ss/13.gif" width="200"> <img src="ss/14.gif" width="200"> 
 
 ## 🤓 Author(s)
 
