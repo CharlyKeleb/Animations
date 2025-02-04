@@ -34,15 +34,15 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  lottie: ^2.6.0
+  lottie: ^3.1.2
   flutter_staggered_animations: ^1.0.0
   flutter_chess_board: ^1.0.1
-  sizer: ^2.0.15
-  google_fonts: ^5.1.0
+  sizer: ^3.0.4
+  google_fonts: ^6.2.1
   ionicons: ^0.2.2
   flutter_hooks: ^0.20.0
   wave: ^0.2.2
-  flutter_compass: ^0.7.0
+  flutter_compass: ^0.8.0
   file: ^7.0.0
   percent_indicator: ^4.2.3
 
@@ -55,7 +55,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.1
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
