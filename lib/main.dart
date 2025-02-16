@@ -8,6 +8,7 @@ import 'package:test_project/draggable_squares/home.dart';
 import 'package:test_project/flutter_compass/home.dart';
 import 'package:test_project/gamepad/gamepad.dart';
 import 'package:test_project/github/home.dart';
+import 'package:test_project/github/sketch.dart';
 import 'package:test_project/google/google_home.dart';
 import 'package:test_project/gradient_spinner/spinner_home.dart';
 import 'package:test_project/loading_circle/loading_circle.dart';
@@ -51,7 +52,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-            home: SphereAnimation(),
+            home:  SphereAnimation(),
         );
       },
     );
@@ -66,6 +67,5 @@ ThemeData themeData(ThemeData theme) {
     ),
   );
 }
-
 
 

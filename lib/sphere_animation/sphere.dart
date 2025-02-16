@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 
 class SphereAnimation extends StatefulWidget {
+  const SphereAnimation({super.key});
+
   @override
-  _SphereAnimationState createState() => _SphereAnimationState();
+  State<SphereAnimation> createState() => SphereAnimationState();
 }
 
-class _SphereAnimationState extends State<SphereAnimation>
+class SphereAnimationState extends State<SphereAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late DateTime _start;
@@ -31,7 +33,7 @@ class _SphereAnimationState extends State<SphereAnimation>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -60,7 +62,7 @@ class SpherePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final pointSize = min(size.width, size.height) * 0.001;
+    final pointSize = min(size.width, size.height) * 0.002;
     final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint();
 
