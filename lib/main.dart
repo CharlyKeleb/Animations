@@ -9,6 +9,7 @@ import 'package:test_project/flutter_compass/home.dart';
 import 'package:test_project/gamepad/gamepad.dart';
 import 'package:test_project/github/home.dart';
 import 'package:test_project/github/sketch.dart';
+import 'package:test_project/glow/glow.dart';
 import 'package:test_project/google/google_home.dart';
 import 'package:test_project/gradient_spinner/spinner_home.dart';
 import 'package:test_project/loading_circle/loading_circle.dart';
@@ -48,11 +49,11 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.blue,
                 brightness: Brightness.light,
               ).copyWith(
-                background: Colors.white,
+                surface: Colors.white,
               ),
             ),
           ),
-            home:  SphereAnimation(),
+            home:   GlowAnimationScreen(),
         );
       },
     );

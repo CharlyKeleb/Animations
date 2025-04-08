@@ -7,11 +7,11 @@ class GlowAnimationScreen extends StatefulWidget {
   const GlowAnimationScreen({super.key});
 
   @override
-  _GlowAnimationScreenState createState() => _GlowAnimationScreenState();
+  State<GlowAnimationScreen> createState() => _GlowAnimationScreenState();
 }
 
 class _GlowAnimationScreenState extends State<GlowAnimationScreen> {
-  List<_GlowPoint> points = [];
+  List<GlowPoint> points = [];
   late Timer _timer;
   double time = 0;
 
@@ -37,7 +37,7 @@ class _GlowAnimationScreenState extends State<GlowAnimationScreen> {
     return GestureDetector(
       onPanUpdate: (details) {
         setState(() {
-          points.add(_GlowPoint(details.localPosition, time));
+          points.add(GlowPoint(details.localPosition, time));
           if (points.length > 100) {
             points.removeAt(0);
           }
@@ -55,7 +55,7 @@ class _GlowAnimationScreenState extends State<GlowAnimationScreen> {
 }
 
 class GlowPainter extends CustomPainter {
-  final List<_GlowPoint> points;
+  final List<GlowPoint> points;
   final double time;
 
   GlowPainter(this.points, this.time);
@@ -79,9 +79,9 @@ class GlowPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-class _GlowPoint {
+class GlowPoint {
   final Offset position;
   final double creationTime;
 
-  _GlowPoint(this.position, this.creationTime);
+  GlowPoint(this.position, this.creationTime);
 }
