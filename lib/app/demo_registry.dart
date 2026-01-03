@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../androidlogo/home.dart' as android_logo;
 import '../apple_card/apple_card.dart' as apple_card;
 import '../battery/home.dart' as battery;
+import '../card_flip/flip_animation.dart' as card_flip;
 import '../chess/home.dart' as chess;
 import '../clock/home.dart' as clock;
 import '../curves/curve_container.dart' as curves;
@@ -57,6 +58,12 @@ class DemoRegistry {
         title: 'Battery',
         builder: _battery,
         tags: ['custom_paint']),
+    Demo(
+      id: 'card_flip',
+      title: 'Flipping Card',
+      builder: _cardFlip,
+      tags: ['animation', 'ui'],
+    ),
     Demo(id: 'chess', title: 'Chess', builder: _chess, tags: ['ui']),
     Demo(id: 'clock', title: 'Clock', builder: _clock, tags: ['custom_paint']),
     Demo(id: 'curves', title: 'Curves', builder: _curves, tags: ['ui']),
@@ -154,6 +161,8 @@ Widget _androidLogo(BuildContext context) => const android_logo.AndroidHome();
 Widget _appleCard(BuildContext context) => const apple_card.AppleCard();
 
 Widget _battery(BuildContext context) => const battery.BatteryHomePage();
+
+Widget _cardFlip(BuildContext context) => card_flip.FlipAnimation();
 
 Widget _chess(BuildContext context) => const chess.ChessHome();
 
