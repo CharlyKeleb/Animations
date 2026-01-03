@@ -28,13 +28,21 @@ class _ExampleIsTypingState extends State<ExampleIsTyping> {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              keyboardDismissBehavior:
+                  ScrollViewKeyboardDismissBehavior.onDrag,
               itemCount: 25,
               reverse: true,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.only(left: 100),
-                  child: FakeMessage(isBig: index.isOdd),
+                  padding: const EdgeInsets.only(left: 82, bottom: 10),
+                  child: _PlayfulMessageBubble(
+                    index: index,
+                    child: FakeMessage(isBig: index.isOdd),
+                  ),
                 );
               },
             ),
@@ -393,12 +401,130 @@ class FakeMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-      height: isBig ? 128 : 36,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-        color: Colors.grey.shade300,
+    return SizedBox(
+      height: isBig ? 128 : 44,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: isBig ? double.infinity : 180,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(18)),
+            color: Colors.white.withValues(alpha: 0.10),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayfulMessageBubble extends StatefulWidget {
+  const _PlayfulMessageBubble({
+    required this.index,
+    required this.child,
+  });
+
+  final int index;
+  final Widget child;
+
+  @override
+  State<_PlayfulMessageBubble> createState() => _PlayfulMessageBubbleState();
+}
+
+class _PlayfulMessageBubbleState extends State<_PlayfulMessageBubble> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    // Slightly vary colors per item for a more "fanciful" look.
+    final hueShift = (widget.index % 6) * 0.06;
+    final c1 = HSVColor.fromColor(scheme.secondary)
+        .withSaturation(0.75)
+        .withValue(0.85)
+        .withHue((HSVColor.fromColor(scheme.secondary).hue + 360 * hueShift) %
+            360)
+        .toColor();
+    final c2 = HSVColor.fromColor(scheme.primary)
+        .withSaturation(0.70)
+        .withValue(0.75)
+        .withHue((HSVColor.fromColor(scheme.primary).hue + 360 * hueShift) % 360)
+        .toColor();
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, child) {
+        return Opacity(
+          opacity: t,
+          child: Transform.translate(
+            offset: Offset(0, (1 - t) * 10),
+            child: child,
+          ),
+        );
+      },
+      child: AnimatedScale(
+        scale: _isPressed ? 0.985 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                c1.withValues(alpha: 0.40),
+                c2.withValues(alpha: 0.24),
+                Colors.white.withValues(alpha: 0.06),
+              ],
+              stops: const [0.0, 0.55, 1.0],
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.10),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: c1.withValues(alpha: 0.18),
+                blurRadius: 22,
+                spreadRadius: 0,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {},
+                onHighlightChanged: (v) => setState(() => _isPressed = v),
+                splashColor: Colors.white.withValues(alpha: 0.10),
+                highlightColor: Colors.white.withValues(alpha: 0.06),
+                child: Stack(
+                  children: [
+                    // Tiny sparkles in the corner.
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 16,
+                        color: Colors.white.withValues(alpha: 0.55),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: widget.child,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

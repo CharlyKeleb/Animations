@@ -6,7 +6,6 @@ import 'theme/app_theme.dart';
 /// Top-level application widget.
 ///
 /// This repo is a collection of independent animation/custom-paint demos.
-/// The app shell (theme + routing + catalog) lives under `lib/app/*`.
 class App extends StatelessWidget {
   const App({super.key});
 

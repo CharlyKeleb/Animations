@@ -7,27 +7,66 @@ import 'package:test_project/spongebob/size_config.dart';
 class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   final double eyeValue;
   final double frownMouthValue;
+  final double strokeProgress;
 
   SpongeBob({
     required this.eyeValue,
     required this.frownMouthValue,
+    this.strokeProgress = 1.0,
   });
+
+  // Draws a path progressively (0..1) using PathMetrics.
+  void animatePath(Path path, Paint paint, Canvas canvas, double progress) {
+    final p = progress.clamp(0.0, 1.0);
+    final metrics = path.computeMetrics();
+    for (final metric in metrics) {
+      final extractPath = metric.extractPath(0.0, metric.length * p);
+      canvas.drawPath(extractPath, paint);
+    }
+  }
+
+  // Maps global progress (0..1) into a local segment progress for [start, end].
+  // Returns 0 before start, 1 after end, linear in-between.
+  double _segment(double start, double end) {
+    final p = strokeProgress.clamp(0.0, 1.0);
+    if (end <= start) return p >= end ? 1.0 : 0.0;
+    if (p <= start) return 0.0;
+    if (p >= end) return 1.0;
+    return (p - start) / (end - start);
+  }
+
+  void _drawProgressivePoints(
+    Canvas canvas, {
+    required List<Offset> points,
+    required Paint paint,
+    required double progress,
+  }) {
+    final p = progress.clamp(0.0, 1.0);
+    if (points.isEmpty || p <= 0) return;
+
+    final count = (points.length * p).ceil().clamp(0, points.length);
+    if (count == 0) return;
+
+    canvas.drawPoints(PointMode.points, points.take(count).toList(), paint);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     initSize(size);
 
+    // 1) Base fills/background (no stroke animation).
     canvas.drawPaint(Paint()..color = Colors.yellow[300]!);
 
     canvas.translate(size.width / 2, size.height / 2);
 
+    // 2) Draw-on strokes (strokeProgress driven).
     _drawFace(canvas, size);
-
     _drawHands(canvas);
-
     _drawBody(size, canvas);
-
     _drawLegs(canvas);
+
+    // 3) Secondary animations (eyes/mouth) are already baked into the paths
+    // via eyeValue/frownMouthValue. Keeping this phase for future layering.
   }
 
   void _drawFace(Canvas canvas, Size size) {
@@ -54,32 +93,46 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
       ..strokeWidth = h12
       ..color = const Color(0xff333333).withOpacity(eyeValue);
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(-distanceBetweenPupils, -h10)
-          ..lineTo(
-            w6 - distanceBetweenPupils,
-            -computeRangeMinMax(eyeValue, h50, h60),
-          ),
-        outlinePaint);
+    // Eyelash/lines draw in early.
+    final eyeLinesProgress = _segment(0.0, 0.20);
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(-w10 - distanceBetweenPupils, -h10)
-          ..lineTo(
-            -w35 - distanceBetweenPupils,
-            -computeRangeMinMax(eyeValue, h40, h50),
-          ),
-        outlinePaint);
+    animatePath(
+      Path()
+        ..moveTo(-distanceBetweenPupils, -h10)
+        ..lineTo(
+          w6 - distanceBetweenPupils,
+          -computeRangeMinMax(eyeValue, h50, h60),
+        ),
+      outlinePaint,
+      canvas,
+      eyeLinesProgress,
+    );
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(w20 - distanceBetweenPupils, -h10)
-          ..lineTo(
-            w46 - distanceBetweenPupils,
-            -computeRangeMinMax(eyeValue, h35, h45),
-          ),
-        outlinePaint);
+    animatePath(
+      Path()
+        ..moveTo(-w10 - distanceBetweenPupils, -h10)
+        ..lineTo(
+          -w35 - distanceBetweenPupils,
+          -computeRangeMinMax(eyeValue, h40, h50),
+        ),
+      outlinePaint,
+      canvas,
+      eyeLinesProgress,
+    );
+
+    animatePath(
+      Path()
+        ..moveTo(w20 - distanceBetweenPupils, -h10)
+        ..lineTo(
+          w46 - distanceBetweenPupils,
+          -computeRangeMinMax(eyeValue, h35, h45),
+        ),
+      outlinePaint,
+      canvas,
+      eyeLinesProgress,
+    );
+
+    // Keep circles as-is (non-path). We'll animate lid arcs below.
 
     canvas.drawCircle(Offset(-distanceBetweenPupils, 0), w50,
         _outlinePaint..color = const Color(0xff333333));
@@ -93,6 +146,7 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         Offset(-distanceBetweenPupils, 0), w12, Paint()..color = Colors.black);
 
     if (distanceBetweenPupils.isNegative) {
+      // Yellow fill stays immediate.
       canvas.drawPath(
         Path()
           ..moveTo(-distanceBetweenPupils - w50, 0)
@@ -129,28 +183,32 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         Paint()..color = Colors.yellow[300]!,
       );
 
-      canvas.drawPath(
-        Path()
-          ..moveTo(
-            -distanceBetweenPupils + computeRangeMinMax(eyeValue, w40, w50),
-            -h10,
-          )
-          ..conicTo(
-            computeRangeMinMax(eyeValue, w185, w110),
-            -h10,
-            -distanceBetweenPupils + computeRangeMinMax(eyeValue, w50, w20),
-            computeRangeMinMax(eyeValue, 0, -h50),
-            0.3,
-          )
-          ..lineTo(
-            -distanceBetweenPupils - computeRangeMinMax(eyeValue, w50, w20),
-            computeRangeMinMax(eyeValue, 0, -h50),
-          ),
+      final lidPath = Path()
+        ..moveTo(
+          -distanceBetweenPupils + computeRangeMinMax(eyeValue, w40, w50),
+          -h10,
+        )
+        ..conicTo(
+          computeRangeMinMax(eyeValue, w185, w110),
+          -h10,
+          -distanceBetweenPupils + computeRangeMinMax(eyeValue, w50, w20),
+          computeRangeMinMax(eyeValue, 0, -h50),
+          0.3,
+        )
+        ..lineTo(
+          -distanceBetweenPupils - computeRangeMinMax(eyeValue, w50, w20),
+          computeRangeMinMax(eyeValue, 0, -h50),
+        );
+
+      animatePath(
+        lidPath,
         _outlinePaint
           ..color = const Color(0xff333333)
               .withOpacity(computeRangeMinMax(eyeValue, 1, 0))
           ..strokeCap = StrokeCap.round
           ..strokeWidth = w4,
+        canvas,
+        _segment(0.15, 0.35),
       );
     } else {
       canvas.drawPath(
@@ -184,33 +242,39 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         Paint()..color = Colors.yellow[300]!,
       );
 
-      canvas.drawPath(
-        Path()
-          ..moveTo(
-            -distanceBetweenPupils - computeRangeMinMax(eyeValue, w40, w50),
-            -h10,
-          )
-          ..conicTo(
-            -computeRangeMinMax(eyeValue, w185, w105),
-            -h10,
-            -distanceBetweenPupils - computeRangeMinMax(eyeValue, w50, w20),
-            computeRangeMinMax(eyeValue, 0, -h50),
-            0.3,
-          )
-          ..lineTo(
-            -distanceBetweenPupils + computeRangeMinMax(eyeValue, w50, w20),
-            computeRangeMinMax(eyeValue, 0, -h50),
-          ),
+      final lidPath = Path()
+        ..moveTo(
+          -distanceBetweenPupils - computeRangeMinMax(eyeValue, w40, w50),
+          -h10,
+        )
+        ..conicTo(
+          -computeRangeMinMax(eyeValue, w185, w105),
+          -h10,
+          -distanceBetweenPupils - computeRangeMinMax(eyeValue, w50, w20),
+          computeRangeMinMax(eyeValue, 0, -h50),
+          0.3,
+        )
+        ..lineTo(
+          -distanceBetweenPupils + computeRangeMinMax(eyeValue, w50, w20),
+          computeRangeMinMax(eyeValue, 0, -h50),
+        );
+
+      animatePath(
+        lidPath,
         _outlinePaint
           ..color = const Color(0xff333333)
               .withOpacity(computeRangeMinMax(eyeValue, 1, 0))
           ..strokeCap = StrokeCap.round
           ..strokeWidth = w4,
+        canvas,
+        _segment(0.15, 0.35),
       );
     }
   }
 
   void _drawNose(Canvas canvas) {
+    final noseProgress = _segment(0.25, 0.45);
+
     Path _nosePathInner = Path()
       ..moveTo(w3, h15)
       ..arcToPoint(
@@ -218,26 +282,31 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         radius: Radius.elliptical(w25, h25),
       );
 
-    canvas.drawPath(
+    animatePath(
       _nosePathInner,
       _outlinePaint
         ..strokeWidth = w5
         ..color = Colors.yellow[300]!
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round,
+      canvas,
+      noseProgress,
     );
+
     Path _nosePath = Path()
       ..moveTo(-w5, h50)
       ..quadraticBezierTo(-w10, h20, w10, h15)
       ..moveTo(w10, h15)
       ..arcToPoint(Offset(w7, h60), radius: Radius.elliptical(w30, h25));
 
-    canvas.drawPath(
+    animatePath(
       _nosePath,
       _outlinePaint
         ..strokeWidth = w5
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round,
+      canvas,
+      noseProgress,
     );
   }
 
@@ -254,6 +323,9 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawLip(Canvas canvas) {
+    // Mouth draws after eyes/nose.
+    final mouthProgress = _segment(0.40, 0.70);
+
     final closedLipDx = h140;
     final openLipDx = computeRangeMinMax(eyeValue, h140, h220);
     final fillupCount = (openLipDx - closedLipDx) ~/ w6;
@@ -272,24 +344,32 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
       ..moveTo(x1, y1)
       ..quadraticBezierTo(x2, y2, x3, y3);
 
-    canvas.drawPath(
+    animatePath(
       _mouthPath,
       _outlinePaint,
+      canvas,
+      mouthProgress,
     );
 
-    canvas.drawPath(
-      Path()
-        ..moveTo(x1, y1)
-        ..quadraticBezierTo(x2, y2Open, x3, y3),
+    final mouthOpenPath = Path()
+      ..moveTo(x1, y1)
+      ..quadraticBezierTo(x2, y2Open, x3, y3);
+
+    animatePath(
+      mouthOpenPath,
       _outlinePaint,
+      canvas,
+      mouthProgress,
     );
 
     for (int i = fillupCount - 1; i > 1; i--) {
-      canvas.drawPath(
+      animatePath(
         Path()
           ..moveTo(-w100, h55)
           ..quadraticBezierTo(w5, closedLipDx + (i * w6), w100, h55),
         _outlinePaint..color = const Color(0xff550015),
+        canvas,
+        mouthProgress,
       );
     }
 
@@ -298,40 +378,43 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
       ..color =
           Colors.black.withOpacity(computeRangeMinMax(frownMouthValue, 1, 0));
 
-    canvas.drawPath(
-      Path()
-        ..moveTo(-w80, h55)
-        ..arcToPoint(
-          Offset(-w100, h70),
-          radius: Radius.elliptical(w12, h10),
-          clockwise: false,
-        ),
-      smilePaint,
-    );
+    final leftSmilePath = Path()
+      ..moveTo(-w80, h55)
+      ..arcToPoint(
+        Offset(-w100, h70),
+        radius: Radius.elliptical(w12, h10),
+        clockwise: false,
+      );
 
-    canvas.drawPath(
-      Path()
-        ..moveTo(w80, h55)
-        ..arcToPoint(
-          Offset(w100, h70),
-          radius: Radius.elliptical(w12, h10),
-          clockwise: true,
-        ),
-      smilePaint,
-    );
+    final rightSmilePath = Path()
+      ..moveTo(w80, h55)
+      ..arcToPoint(
+        Offset(w100, h70),
+        radius: Radius.elliptical(w12, h10),
+        clockwise: true,
+      );
+
+    // Animate just the smile "strokes" too (late mouth segment).
+    animatePath(leftSmilePath, smilePaint, canvas, mouthProgress);
+    animatePath(rightSmilePath, smilePaint, canvas, mouthProgress);
   }
 
   void _drawLeftCheek(Canvas canvas) {
+    final cheekProgress = _segment(0.55, 0.78);
+
     final _cheekInner = Path()
       ..moveTo(-w130, h20)
       ..conicTo(w70, h40, -w80, h55, 0.1);
-    canvas.drawPath(
+
+    animatePath(
       _cheekInner,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = w13
         ..color = Colors.yellow[300]!
             .withOpacity(computeRangeMinMax(frownMouthValue, 1, 0)),
+      canvas,
+      cheekProgress,
     );
 
     _drawCheek(canvas, position: -1);
@@ -340,16 +423,21 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawRightCheek(Canvas canvas) {
+    final cheekProgress = _segment(0.55, 0.78);
+
     final _cheekInner = Path()
       ..moveTo(w120, h30)
       ..conicTo(w45, 0, w75, h60, 0.14);
-    canvas.drawPath(
+
+    animatePath(
       _cheekInner,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = w13
         ..color = Colors.yellow[300]!
             .withOpacity(computeRangeMinMax(frownMouthValue, 1, 0)),
+      canvas,
+      cheekProgress,
     );
 
     _drawCheek(canvas);
@@ -358,6 +446,8 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawCheek(Canvas canvas, {double position = 1}) {
+    final cheekProgress = _segment(0.60, 0.82);
+
     final _cheeksPaint = Paint()
       ..strokeWidth = w5
       ..color = const Color(0xffA05729)
@@ -366,15 +456,21 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(w70 * position, h50)
-          ..cubicTo(w110 * position, -h10, w160 * position, h70,
-              w110 * position, h78),
-        _cheeksPaint);
+    animatePath(
+      Path()
+        ..moveTo(w70 * position, h50)
+        ..cubicTo(w110 * position, -h10, w160 * position, h70,
+            w110 * position, h78),
+      _cheeksPaint,
+      canvas,
+      cheekProgress,
+    );
   }
 
   void _drawDotsOnCheek(Canvas canvas, {double position = 1}) {
+    final dotsProgress = _segment(0.70, 0.90);
+    if (dotsProgress <= 0.75) return;
+
     final _dotsOnCheekPaint = Paint()
       ..color = const Color(0xffA05729)
       ..strokeWidth = w3
@@ -399,25 +495,35 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawTooth(Canvas canvas, {double position = 1}) {
-    canvas.drawPath(
-      Path()
-        ..moveTo(w30 * position, h95)
-        ..lineTo(w28 * position, h115)
-        ..moveTo(w28 * position, h115)
-        ..lineTo(w5 * position, h115)
-        ..moveTo(w5 * position, h115)
-        ..lineTo(w5 * position, h100)
-        ..close(),
+    final toothProgress = _segment(0.70, 0.90);
+
+    final toothPath = Path()
+      ..moveTo(w30 * position, h95)
+      ..lineTo(w28 * position, h115)
+      ..moveTo(w28 * position, h115)
+      ..lineTo(w5 * position, h115)
+      ..moveTo(w5 * position, h115)
+      ..lineTo(w5 * position, h100)
+      ..close();
+
+    animatePath(
+      toothPath,
       _outlinePaint
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round,
+      canvas,
+      toothProgress,
     );
 
-    canvas.drawRect(
+    // Tooth fill pops in after outline is mostly done.
+    if (toothProgress > 0.85) {
+      canvas.drawRect(
         Rect.fromPoints(
             Offset(w27 * position, h98), Offset(w9 * position, h112)),
-        Paint()..color = Colors.white);
+        Paint()..color = Colors.white,
+      );
+    }
   }
 
   void _drawHands(Canvas canvas) {
@@ -427,43 +533,62 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawHand(Canvas canvas, {double position = 1}) {
+    final handProgress = _segment(0.20, 0.55);
+
     var shirtHandPath = Path()
       ..moveTo(w150 * position, h20)
       ..conicTo(w190 * position, h30, h170 * position, h70, 0.2)
       ..conicTo(w10 * position, h100, w130 * position, h70, 0.1)
       ..conicTo(w90 * position, h70, w150 * position, h20, 0.2);
-    canvas.drawPath(shirtHandPath, _outlinePaint..strokeWidth = w7);
 
-    canvas.drawPath(
+    animatePath(
       shirtHandPath,
-      _outlinePaint
-        ..strokeWidth = w3
-        ..color = Colors.white
-        ..style = PaintingStyle.fill,
+      _outlinePaint..strokeWidth = w7,
+      canvas,
+      handProgress,
     );
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(w160 * position, h75)
-          ..lineTo(w155 * position, h150)
-          ..cubicTo(w160 * position, h150, w170 * position, h190,
-              w125 * position, h210)
-          ..moveTo(w140 * position, h200)
-          ..cubicTo(w100 * position, h230, w120 * position, h195,
-              w140 * position, h190)
-          ..moveTo(w125 * position, h190)
-          ..cubicTo(w100 * position, h200, w120 * position, h210,
-              w120 * position, h200)
-          ..moveTo(w120 * position, h185)
-          ..cubicTo(w100 * position, h200, w110 * position, h200,
-              w115 * position, h195)
-          ..moveTo(w120 * position, h185)
-          ..conicTo(w130 * position, h130, w140 * position, h155, 0.1)
-          ..lineTo(w145 * position, h75),
-        _outlinePaint..strokeWidth = w4);
+    // Shirt fill after most of outline is there.
+    if (handProgress > 0.85) {
+      canvas.drawPath(
+        shirtHandPath,
+        _outlinePaint
+          ..strokeWidth = w3
+          ..color = Colors.white
+          ..style = PaintingStyle.fill,
+      );
+    }
+
+    final armPath = Path()
+      ..moveTo(w160 * position, h75)
+      ..lineTo(w155 * position, h150)
+      ..cubicTo(w160 * position, h150, w170 * position, h190,
+          w125 * position, h210)
+      ..moveTo(w140 * position, h200)
+      ..cubicTo(w100 * position, h230, w120 * position, h195,
+          w140 * position, h190)
+      ..moveTo(w125 * position, h190)
+      ..cubicTo(w100 * position, h200, w120 * position, h210,
+          w120 * position, h200)
+      ..moveTo(w120 * position, h185)
+      ..cubicTo(w100 * position, h200, w110 * position, h200,
+          w115 * position, h195)
+      ..moveTo(w120 * position, h185)
+      ..conicTo(w130 * position, h130, w140 * position, h155, 0.1)
+      ..lineTo(w145 * position, h75);
+
+    animatePath(
+      armPath,
+      _outlinePaint..strokeWidth = w4,
+      canvas,
+      handProgress,
+    );
   }
 
   void _drawBody(Size size, Canvas canvas) {
+    // Body/header strokes should animate later in the sequence.
+    final bodyProgress = _segment(0.50, 1.0);
+
     final pointWidth = size.width ~/ w40;
 
     final paint = Paint()
@@ -494,19 +619,24 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
 
     _drawShirt(_horizontalSplinePoints, canvas);
 
-    canvas.drawPoints(
-      PointMode.points,
-      _horizontalSplinePoints.map((e) => e.value.translate(0, h35)).toList(),
-      _outlinePaint
+    // Animate the "header" point bands by progressively revealing points.
+    final bandProgress = _segment(0.58, 0.92);
+
+    _drawProgressivePoints(
+      canvas,
+      points: _horizontalSplinePoints.map((e) => e.value.translate(0, h35)).toList(),
+      paint: _outlinePaint
         ..strokeWidth = w30
         ..strokeCap = StrokeCap.round
         ..color = Colors.yellow[300]!,
+      progress: bandProgress,
     );
 
-    canvas.drawPoints(
-      PointMode.points,
-      _horizontalSplinePoints.map((e) => e.value.translate(0, h55)).toList(),
-      paint,
+    _drawProgressivePoints(
+      canvas,
+      points: _horizontalSplinePoints.map((e) => e.value.translate(0, h55)).toList(),
+      paint: paint,
+      progress: bandProgress,
     );
 
     _drawTopWavyLine(topHorizontalPoints, canvas, paint);
@@ -515,14 +645,16 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
 
     _drawRightWaveLine(size, canvas, paint);
 
-    _drawBodyPores(canvas);
-
-    _drawChin(canvas);
-
-    _drawChin(canvas, position: -1);
+    if (bodyProgress > 0.55) {
+      _drawBodyPores(canvas);
+      _drawChin(canvas);
+      _drawChin(canvas, position: -1);
+    }
   }
 
   void _drawShirt(List<Curve2DSample> _splinePoints, Canvas canvas) {
+    final shirtProgress = _segment(0.55, 0.95);
+
     var first = _splinePoints.first.value;
     var last = _splinePoints.last.value;
     final paint = Paint()
@@ -548,121 +680,170 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
           ..lineTo(first.dx, h100);
       }
     }
-    canvas.drawPath(
-      _shirtPath,
-      paint,
-    );
 
-    canvas.drawRect(
+    animatePath(_shirtPath, paint, canvas, shirtProgress);
+
+    // Shirt fill appears after outline is mostly done.
+    if (shirtProgress > 0.85) {
+      canvas.drawRect(
         Rect.fromPoints(first.translate(0, h50), last.translate(0, h110)),
-        paint..style = PaintingStyle.fill);
+        paint..style = PaintingStyle.fill,
+      );
+    }
 
-    canvas.drawLine(
-      first.translate(-w5, h100),
-      last.translate(w5, h115),
+    // Bottom black line
+    animatePath(
+      Path()
+        ..moveTo(first.translate(-w5, h100).dx, first.translate(-w5, h100).dy)
+        ..lineTo(last.translate(w5, h115).dx, last.translate(w5, h115).dy),
       paint
         ..style = PaintingStyle.fill
         ..color = Colors.black
         ..strokeCap = StrokeCap.butt
         ..strokeWidth = w7,
+      canvas,
+      _segment(0.70, 0.98),
     );
 
     _drawColar(canvas);
-
     _drawColar(canvas, position: -1);
 
-    canvas.drawRect(Rect.fromPoints(Offset(-w145, h110), Offset(w148, h165)),
-        Paint()..color = const Color(0xffA05729));
+    if (shirtProgress > 0.80) {
+      canvas.drawRect(
+        Rect.fromPoints(Offset(-w145, h110), Offset(w148, h165)),
+        Paint()..color = const Color(0xffA05729),
+      );
+    }
 
-    canvas.drawLine(Offset(-w130, h125), Offset(-w80, h125),
-        _outlinePaint..strokeWidth = w10);
+    // Decorative + border lines (convert drawLine -> animatePath)
+    final borderProgress = _segment(0.75, 1.0);
 
-    canvas.drawLine(Offset(-w70, h125), Offset(w10, h125),
-        _outlinePaint..strokeWidth = w10);
-
-    canvas.drawLine(
-        Offset(w20, h125), Offset(w70, h125), _outlinePaint..strokeWidth = w10);
-
-    canvas.drawLine(Offset(w80, h125), Offset(w130, h125),
-        _outlinePaint..strokeWidth = w10);
+    animatePath(
+      Path()..moveTo(-w130, h125)..lineTo(-w80, h125),
+      _outlinePaint..strokeWidth = w10,
+      canvas,
+      borderProgress,
+    );
+    animatePath(
+      Path()..moveTo(-w70, h125)..lineTo(w10, h125),
+      _outlinePaint..strokeWidth = w10,
+      canvas,
+      borderProgress,
+    );
+    animatePath(
+      Path()..moveTo(w20, h125)..lineTo(w70, h125),
+      _outlinePaint..strokeWidth = w10,
+      canvas,
+      borderProgress,
+    );
+    animatePath(
+      Path()..moveTo(w80, h125)..lineTo(w130, h125),
+      _outlinePaint..strokeWidth = w10,
+      canvas,
+      borderProgress,
+    );
 
     _drawTie(canvas);
 
-    canvas.drawLine(
-      Offset(-w145, h65),
-      Offset(-w145, h165),
+    animatePath(
+      Path()..moveTo(-w145, h65)..lineTo(-w145, h165),
       _outlinePaint
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round,
+      canvas,
+      borderProgress,
     );
 
-    canvas.drawLine(
-      Offset(w145, h50),
-      Offset(w145, h165),
+    animatePath(
+      Path()..moveTo(w145, h50)..lineTo(w145, h165),
       _outlinePaint
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round,
+      canvas,
+      borderProgress,
     );
 
-    canvas.drawLine(
-      Offset(-w145, h165),
-      Offset(w145, h165),
+    animatePath(
+      Path()..moveTo(-w145, h165)..lineTo(w145, h165),
       paint
         ..style = PaintingStyle.fill
         ..color = Colors.black
         ..strokeCap = StrokeCap.butt
         ..strokeWidth = w7,
+      canvas,
+      borderProgress,
     );
   }
 
   void _drawColar(Canvas canvas, {double position = 1}) {
+    final collarProgress = _segment(0.62, 0.92);
+
     Path _colarPath = Path()
       ..moveTo((position.isNegative ? w55 : w60) * position,
           position.isNegative ? h65 : h50)
       ..lineTo(w30 * position, h90)
       ..lineTo(0, h55);
-    canvas.drawPath(
-        _colarPath,
-        _outlinePaint
-          ..strokeCap = StrokeCap.round
-          ..strokeJoin = StrokeJoin.round);
+
+    animatePath(
+      _colarPath,
+      _outlinePaint
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+      canvas,
+      collarProgress,
+    );
   }
 
   void _drawTie(Canvas canvas) {
+    final tieProgress = _segment(0.78, 1.0);
+
     final tieStrokePaint = _outlinePaint
       ..strokeWidth = w10
       ..strokeJoin = StrokeJoin.round
       ..strokeCap = StrokeCap.round;
 
-    canvas
-      ..drawLine(Offset(-w15, h80), Offset(-w30, h140), tieStrokePaint)
-      ..drawLine(Offset(-w30, h140), Offset(0, h160), tieStrokePaint)
-      ..drawLine(Offset(w30, h140), Offset(0, h160), tieStrokePaint)
-      ..drawLine(Offset(w15, h80), Offset(w30, h140), tieStrokePaint);
+    // Convert the tie lines to paths so they animate.
+    animatePath(Path()..moveTo(-w15, h80)..lineTo(-w30, h140), tieStrokePaint,
+        canvas, tieProgress);
+    animatePath(Path()..moveTo(-w30, h140)..lineTo(0, h160), tieStrokePaint,
+        canvas, tieProgress);
+    animatePath(Path()..moveTo(w30, h140)..lineTo(0, h160), tieStrokePaint,
+        canvas, tieProgress);
+    animatePath(Path()..moveTo(w15, h80)..lineTo(w30, h140), tieStrokePaint,
+        canvas, tieProgress);
 
     final tiePaint = _outlinePaint
       ..strokeJoin = StrokeJoin.round
       ..strokeCap = StrokeCap.round
       ..color = Colors.red;
 
-    int index = 1;
-    for (int i = 25; i >= 0; i -= 5) {
-      final substract = index * w5;
-      canvas
-        ..drawLine(Offset(-w15 + substract, h80),
-            Offset(-w30 + substract, h140), tiePaint)
-        ..drawLine(Offset(-w30 + substract, h140), Offset(0, h155), tiePaint)
-        ..drawLine(Offset(w30 - substract, h140), Offset(0, h155), tiePaint)
-        ..drawLine(Offset(w15 - substract, h80), Offset(w30 - substract, h140),
-            tiePaint);
-      index++;
+    if (tieProgress > 0.65) {
+      int index = 1;
+      for (int i = 25; i >= 0; i -= 5) {
+        final substract = index * w5;
+        canvas
+          ..drawLine(Offset(-w15 + substract, h80),
+              Offset(-w30 + substract, h140), tiePaint)
+          ..drawLine(
+              Offset(-w30 + substract, h140), Offset(0, h155), tiePaint)
+          ..drawLine(
+              Offset(w30 - substract, h140), Offset(0, h155), tiePaint)
+          ..drawLine(Offset(w15 - substract, h80),
+              Offset(w30 - substract, h140), tiePaint);
+        index++;
+      }
     }
 
-    canvas.drawOval(
-        Rect.fromPoints(Offset(-w20, h58), Offset(w20, h90)), _outlinePaint);
+    // Ovals are not paths; show them when the tie is mostly drawn.
+    if (tieProgress > 0.85) {
+      canvas.drawOval(
+          Rect.fromPoints(Offset(-w20, h58), Offset(w20, h90)), _outlinePaint);
 
-    canvas.drawOval(Rect.fromPoints(Offset(-w18, h60), Offset(w18, h87)),
-        Paint()..color = Colors.red);
+      canvas.drawOval(
+        Rect.fromPoints(Offset(-w18, h60), Offset(w18, h87)),
+        Paint()..color = Colors.red,
+      );
+    }
   }
 
   void _drawTopWavyLine(
@@ -670,17 +851,28 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
     Canvas canvas,
     Paint paint,
   ) {
-    final topSplinePoint =
-        CatmullRomSpline(topHorizontalPoints).generateSamples();
+    final waveProgress = _segment(0.62, 0.95);
 
-    canvas.drawPoints(
-      PointMode.points,
-      topSplinePoint.map((e) => e.value.translate(0, -h230)).toList(),
-      paint,
-    );
+    final topSplinePoint =
+        CatmullRomSpline(topHorizontalPoints).generateSamples().toList();
+
+    // Convert the sampled points into a polyline path so we can animate it.
+    final path = Path();
+    if (topSplinePoint.isNotEmpty) {
+      final first = topSplinePoint.first.value.translate(0, -h230);
+      path.moveTo(first.dx, first.dy);
+      for (final sample in topSplinePoint.skip(1)) {
+        final p = sample.value.translate(0, -h230);
+        path.lineTo(p.dx, p.dy);
+      }
+    }
+
+    animatePath(path, paint, canvas, waveProgress);
   }
 
   void _drawLeftWaveLine(Size size, Canvas canvas, Paint paint) {
+    final waveProgress = _segment(0.62, 0.95);
+
     final pointHeight = (size.height * 0.5) ~/ w30;
 
     final List<Offset> verticalPoints = [];
@@ -711,13 +903,12 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         ..moveTo(valOffset.dx, valOffset.dy);
     }
 
-    canvas.drawPath(
-      verticalWavePath,
-      paint,
-    );
+    animatePath(verticalWavePath, paint, canvas, waveProgress);
   }
 
   void _drawRightWaveLine(Size size, Canvas canvas, Paint paint) {
+    final waveProgress = _segment(0.62, 0.95);
+
     final pointHeight = (size.height * 0.45) ~/ w30;
 
     final List<Offset> verticalPoints = [];
@@ -747,10 +938,7 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
         ..moveTo(valOffset.dx, valOffset.dy);
     }
 
-    canvas.drawPath(
-      verticalWavePath,
-      paint,
-    );
+    animatePath(verticalWavePath, paint, canvas, waveProgress);
   }
 
   void _drawBodyPores(Canvas canvas) {
@@ -808,33 +996,45 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawLeg(Canvas canvas, {double position = 1}) {
-    canvas.drawLine(
-        Offset(w87 * position, h174),
-        Offset(w42 * position, h174),
-        Paint()
-          ..color = const Color(0xffA05729)
-          ..strokeWidth = h12);
+    final legProgress = _segment(0.78, 1.0);
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(w90 * position, h165)
-          ..lineTo(
-            w90 * position,
-            h180,
-          )
-          ..conicTo(w80 * position, h210, w40 * position, h180, 0.1)
-          ..lineTo(w40 * position, h165),
-        _outlinePaint);
+    animatePath(
+      Path()
+        ..moveTo(w87 * position, h174)
+        ..lineTo(w42 * position, h174),
+      Paint()
+        ..color = const Color(0xffA05729)
+        ..strokeWidth = h12,
+      canvas,
+      legProgress,
+    );
 
-    canvas.drawPath(        
-        Path()
-          ..moveTo(w60 * position, h185)
-          ..conicTo(w30 * position, h200, w60 * position, h260, 0.2)
-          ..moveTo(w70 * position, h185)
-          ..conicTo(w45 * position, h200, w70 * position, h265, 0.2),
-        _outlinePaint
-          ..strokeCap = StrokeCap.square
-          ..strokeWidth = w4);
+    animatePath(
+      Path()
+        ..moveTo(w90 * position, h165)
+        ..lineTo(
+          w90 * position,
+          h180,
+        )
+        ..conicTo(w80 * position, h210, w40 * position, h180, 0.1)
+        ..lineTo(w40 * position, h165),
+      _outlinePaint,
+      canvas,
+      legProgress,
+    );
+
+    animatePath(
+      Path()
+        ..moveTo(w60 * position, h185)
+        ..conicTo(w30 * position, h200, w60 * position, h260, 0.2)
+        ..moveTo(w70 * position, h185)
+        ..conicTo(w45 * position, h200, w70 * position, h265, 0.2),
+      _outlinePaint
+        ..strokeCap = StrokeCap.square
+        ..strokeWidth = w4,
+      canvas,
+      legProgress,
+    );
 
     _drawSock(canvas, position);
 
@@ -842,50 +1042,78 @@ class SpongeBob extends CustomPainter with SizesHelper, Mathshelper {
   }
 
   void _drawSock(Canvas canvas, double position) {
-    canvas.drawPath(
-        Path()
-          ..moveTo(w62 * position, h225)
-          ..conicTo(w40 * position, h255, w65 * position, h260, 0.1),
-        _outlinePaint
-          ..strokeCap = StrokeCap.square
-          ..color = Colors.white
-          ..strokeWidth = w5);
+    final sockProgress = _segment(0.80, 1.0);
 
-    canvas.drawLine(Offset(w55 * position, h225), Offset(w65 * position, h225),
-        _outlinePaint..strokeWidth = w2_5);
+    animatePath(
+      Path()
+        ..moveTo(w62 * position, h225)
+        ..conicTo(w40 * position, h255, w65 * position, h260, 0.1),
+      _outlinePaint
+        ..strokeCap = StrokeCap.square
+        ..color = Colors.white
+        ..strokeWidth = w5,
+      canvas,
+      sockProgress,
+    );
 
-    canvas.drawLine(
-        Offset(w57 * position, h235),
-        Offset(w65 * position, h235),
-        _outlinePaint
-          ..strokeWidth = w2_5
-          ..color = Colors.blue);
+    animatePath(
+      Path()
+        ..moveTo(w55 * position, h225)
+        ..lineTo(w65 * position, h225),
+      _outlinePaint..strokeWidth = w2_5,
+      canvas,
+      sockProgress,
+    );
 
-    canvas.drawLine(
-        Offset(w57 * position, h245),
-        Offset(w65 * position, h245),
-        _outlinePaint
-          ..strokeWidth = w2_5
-          ..color = Colors.red);
+    animatePath(
+      Path()
+        ..moveTo(w57 * position, h235)
+        ..lineTo(w65 * position, h235),
+      _outlinePaint
+        ..strokeWidth = w2_5
+        ..color = Colors.blue,
+      canvas,
+      sockProgress,
+    );
+
+    animatePath(
+      Path()
+        ..moveTo(w57 * position, h245)
+        ..lineTo(w65 * position, h245),
+      _outlinePaint
+        ..strokeWidth = w2_5
+        ..color = Colors.red,
+      canvas,
+      sockProgress,
+    );
   }
 
   void _drawShoe(Canvas canvas, {required double position}) {
-    canvas.drawPath(
-        Path()
-          ..moveTo(w60 * position, h260)
-          ..lineTo(w85 * position, h270)
-          ..cubicTo(w130 * position, h220, w150 * position, h330,
-              w65 * position, h290)
-          ..lineTo(w65 * position, h297)
-          ..lineTo(w45 * position, h297)
-          ..conicTo(w30 * position, h240, w65 * position, h265, 0.5)
-          ..close(),
-        _outlinePaint..style = PaintingStyle.fill);
+    final shoeProgress = _segment(0.86, 1.0);
 
-    canvas.drawOval(
+    final shoePath = Path()
+      ..moveTo(w60 * position, h260)
+      ..lineTo(w85 * position, h270)
+      ..cubicTo(w130 * position, h220, w150 * position, h330,
+          w65 * position, h290)
+      ..lineTo(w65 * position, h297)
+      ..lineTo(w45 * position, h297)
+      ..conicTo(w30 * position, h240, w65 * position, h265, 0.5)
+      ..close();
+
+    // Draw shoe fill once most stroke is there.
+    if (shoeProgress > 0.75) {
+      canvas.drawPath(shoePath, _outlinePaint..style = PaintingStyle.fill);
+    }
+
+    // Shoe highlight pops in at the end.
+    if (shoeProgress > 0.9) {
+      canvas.drawOval(
         Rect.fromPoints(
             Offset(w100 * position, h265), Offset(w115 * position, h270)),
-        Paint()..color = Colors.white);
+        Paint()..color = Colors.white,
+      );
+    }
   }
 
   Paint get _outlinePaint => Paint()

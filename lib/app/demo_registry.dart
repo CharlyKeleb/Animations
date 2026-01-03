@@ -26,7 +26,6 @@ import '../spider/spider_home.dart' as spider;
 import '../spongebob/home.dart' as spongebob;
 import '../squidgame/home.dart' as squidgame;
 import '../starbucks/home.dart' as starbucks;
-import '../textSpinner/text_spinner.dart' as text_spinner;
 import '../typing/animated_type.dart' as typing;
 
 import 'model/demo.dart';
@@ -53,32 +52,93 @@ class DemoRegistry {
       builder: _appleCard,
       tags: ['ui'],
     ),
-    Demo(id: 'battery', title: 'Battery', builder: _battery, tags: ['custom_paint']),
+    Demo(
+        id: 'battery',
+        title: 'Battery',
+        builder: _battery,
+        tags: ['custom_paint']),
     Demo(id: 'chess', title: 'Chess', builder: _chess, tags: ['ui']),
     Demo(id: 'clock', title: 'Clock', builder: _clock, tags: ['custom_paint']),
     Demo(id: 'curves', title: 'Curves', builder: _curves, tags: ['ui']),
     Demo(id: 'discord', title: 'Discord', builder: _discord, tags: ['ui']),
-    Demo(id: 'draggable_squares', title: 'Draggable Squares', builder: _draggableSquares, tags: ['gesture']),
-    Demo(id: 'duolingo', title: 'Duolingo', builder: _duolingo, tags: ['custom_paint']),
+    Demo(
+        id: 'draggable_squares',
+        title: 'Draggable Squares',
+        builder: _draggableSquares,
+        tags: ['gesture']),
+    Demo(
+        id: 'duolingo',
+        title: 'Duolingo',
+        builder: _duolingo,
+        tags: ['custom_paint']),
     Demo(id: 'compass', title: 'Compass', builder: _compass, tags: ['sensor']),
-    Demo(id: 'flutter_dash', title: 'Flutter Dash', builder: _flutterDash, tags: ['custom_paint']),
+    Demo(
+        id: 'flutter_dash',
+        title: 'Flutter Dash',
+        builder: _flutterDash,
+        tags: ['custom_paint']),
     Demo(id: 'gamepad', title: 'Gamepad', builder: _gamepad, tags: ['ui']),
-    Demo(id: 'github', title: 'GitHub', builder: _github, tags: ['custom_paint']),
+    Demo(
+        id: 'github',
+        title: 'GitHub',
+        builder: _github,
+        tags: ['custom_paint']),
     Demo(id: 'glow', title: 'Glow', builder: _glow, tags: ['effects']),
-    Demo(id: 'gradient_spinner', title: 'Gradient Spinner', builder: _gradientSpinner, tags: ['animation']),
-    Demo(id: 'loading_circle', title: 'Loading Circle', builder: _loadingCircle, tags: ['animation']),
+    Demo(
+        id: 'gradient_spinner',
+        title: 'Gradient Spinner',
+        builder: _gradientSpinner,
+        tags: ['animation']),
+    Demo(
+        id: 'loading_circle',
+        title: 'Loading Circle',
+        builder: _loadingCircle,
+        tags: ['animation']),
     Demo(id: 'matrix', title: 'Matrix', builder: _matrix, tags: ['effects']),
-    Demo(id: 'parallax', title: 'Parallax UI', builder: _parallax, tags: ['ui']),
-    Demo(id: 'parot', title: 'Parot', builder: _parot, tags: ['custom_paint', 'animation']),
-    Demo(id: 'rotating_container', title: 'Rotating Container', builder: _rotatingContainer, tags: ['animation']),
-    Demo(id: 'signature', title: 'Signature', builder: _signature, tags: ['drawing']),
-    Demo(id: 'sphere', title: 'Sphere Animation', builder: _sphere, tags: ['custom_paint']),
-    Demo(id: 'spider', title: 'Spider', builder: _spider, tags: ['custom_paint']),
-    Demo(id: 'spongebob', title: 'SpongeBob', builder: _spongebob, tags: ['custom_paint']),
-    Demo(id: 'squidgame', title: 'Squid Game', builder: _squidgame, tags: ['ui']),
-    Demo(id: 'starbucks', title: 'Starbucks', builder: _starbucks, tags: ['ui']),
-    Demo(id: 'text_spinner', title: 'Text Spinner', builder: _textSpinner, tags: ['text']),
-    Demo(id: 'typing', title: 'Typing Indicator', builder: _typing, tags: ['ui']),
+    Demo(
+        id: 'parallax', title: 'Parallax UI', builder: _parallax, tags: ['ui']),
+    Demo(
+        id: 'parot',
+        title: 'Parot',
+        builder: _parot,
+        tags: ['custom_paint', 'animation']),
+    Demo(
+        id: 'rotating_container',
+        title: 'Rotating Container',
+        builder: _rotatingContainer,
+        tags: ['animation']),
+    Demo(
+        id: 'signature',
+        title: 'Signature',
+        builder: _signature,
+        tags: ['drawing']),
+    Demo(
+        id: 'sphere',
+        title: 'Sphere Animation',
+        builder: _sphere,
+        tags: ['custom_paint']),
+    Demo(
+        id: 'spider',
+        title: 'Spider',
+        builder: _spider,
+        tags: ['custom_paint']),
+    Demo(
+        id: 'spongebob',
+        title: 'SpongeBob',
+        builder: _spongebob,
+        tags: ['custom_paint']),
+    Demo(
+        id: 'squidgame',
+        title: 'Squid Game',
+        builder: _squidgame,
+        tags: ['ui']),
+    Demo(
+        id: 'starbucks', title: 'Starbucks', builder: _starbucks, tags: ['ui']),
+    Demo(
+        id: 'typing',
+        title: 'Typing Indicator',
+        builder: _typing,
+        tags: ['ui']),
   ];
 
   static Demo? byId(String id) {
@@ -90,30 +150,59 @@ class DemoRegistry {
 }
 
 Widget _androidLogo(BuildContext context) => const android_logo.AndroidHome();
+
 Widget _appleCard(BuildContext context) => const apple_card.AppleCard();
+
 Widget _battery(BuildContext context) => const battery.BatteryHomePage();
+
 Widget _chess(BuildContext context) => const chess.ChessHome();
+
 Widget _clock(BuildContext context) => const clock.ClockHome();
+
 Widget _curves(BuildContext context) => const curves.CurveContainer();
+
 Widget _discord(BuildContext context) => const discord.DiscordHome();
-Widget _draggableSquares(BuildContext context) => const draggable_squares.Home();
+
+Widget _draggableSquares(BuildContext context) =>
+    const draggable_squares.Home();
+
 Widget _duolingo(BuildContext context) => const duolingo.Duolingo();
+
 Widget _compass(BuildContext context) => const compass.CompassHome();
+
 Widget _flutterDash(BuildContext context) => const flutter_dash.FlutterDash();
+
 Widget _gamepad(BuildContext context) => const gamepad.GamePad();
+
 Widget _github(BuildContext context) => const github.Github();
+
 Widget _glow(BuildContext context) => const glow.GlowAnimationScreen();
-Widget _gradientSpinner(BuildContext context) => const gradient_spinner.GradientSpinner();
-Widget _loadingCircle(BuildContext context) => const loading_circle.LoadingFaceAnimationScreen();
+
+Widget _gradientSpinner(BuildContext context) =>
+    const gradient_spinner.GradientSpinner();
+
+Widget _loadingCircle(BuildContext context) =>
+    const loading_circle.LoadingFaceAnimationScreen();
+
 Widget _matrix(BuildContext context) => const matrix.MatrixHome();
+
 Widget _parallax(BuildContext context) => const parallax.ParallaxScroll();
+
 Widget _parot(BuildContext context) => const parot.BirdLogoPage();
-Widget _rotatingContainer(BuildContext context) => const rotating_container.RotationHome();
+
+Widget _rotatingContainer(BuildContext context) =>
+    const rotating_container.RotationHome();
+
 Widget _signature(BuildContext context) => const signature.SignatureAnimation();
+
 Widget _sphere(BuildContext context) => const sphere.SphereAnimation();
+
 Widget _spider(BuildContext context) => const spider.SpiderHome();
+
 Widget _spongebob(BuildContext context) => const spongebob.SpongeBobHome();
+
 Widget _squidgame(BuildContext context) => const squidgame.SquidGameHome();
+
 Widget _starbucks(BuildContext context) => const starbucks.StarBucks();
-Widget _textSpinner(BuildContext context) => const text_spinner.RotatingTextApp();
+
 Widget _typing(BuildContext context) => const typing.ExampleIsTyping();
