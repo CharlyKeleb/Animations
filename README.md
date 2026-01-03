@@ -1,15 +1,18 @@
 # 🔥🔥 Custom Paint Animations [![Twitter Follow](https://img.shields.io/twitter/follow/CharlyKeleb.svg?style=social)](https://twitter.com/CharlyKeleb)
 
-This project contains list of Custom Paint Animations and Flutter UI Kits
+This project contains a collection of **Flutter UI kits**, **animations**, and **CustomPaint** demos.
 
-Star⭐ the repo and follow me if you like what you see😉.
+## Run the project
+
+This repo ships with a built-in **demo catalog** (search + navigation).
+
+- Run on a simulator/device, then pick a demo from the list.
 
 ## ✨ Requirements
 
 * Any Operating System (ie. MacOS X, Linux, Windows)
 * Any IDE with Flutter SDK installed (ie. IntelliJ, Android Studio, VSCode etc)
 * A little knowledge of Dart and Flutter
-* A brain to think 🤓🤓
 
 ## Screenshots & Gifs
 
@@ -22,6 +25,10 @@ Star⭐ the repo and follow me if you like what you see😉.
 <img src="ss/10.gif" width="200"> <img src="ss/11.gif" width="200"> <img src="ss/12.gif" width="200"> 
 
 <img src="ss/13.gif" width="200"> <img src="ss/14.gif" width="200"> 
+
+## Contributing
+
+See `CONTRIBUTING.md` for repo conventions and how to add a new demo.
 
 ## 🤓 Author(s)
 

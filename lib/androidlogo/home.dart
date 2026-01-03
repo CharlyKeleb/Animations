@@ -1,110 +1,69 @@
-import 'dart:async';
-import 'dart:ui';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'dart:math' as math;
-
 class AndroidHome extends StatefulWidget {
-  const AndroidHome({Key? key}) : super(key: key);
+  const AndroidHome({super.key});
 
   @override
   State<AndroidHome> createState() => _AndroidHomeState();
 }
 
 class _AndroidHomeState extends State<AndroidHome>
-    with TickerProviderStateMixin {
-  //animation controllers
-  AnimationController? logoController;
-  AnimationController? logoTopController;
-  AnimationController? androidTopController;
-  AnimationController? strokeController;
-  AnimationController? shadowController;
-  AnimationController? fadeController;
-  AnimationController? filledController;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
 
-  Animation<double>? logoAnimation;
-  Animation<double>? logoTopAnimation;
-  Animation<double>? androidTopAnimation;
-  Animation<double>? strokeAnimation;
-  Animation<double>? shadowAnimation;
-  Animation<double>? fadeAnimation;
-  Animation<double>? filledAnimation;
+  // Staged animations (0..1 each) derived from one master timeline.
+  late final Animation<double> _shadow;
+  late final Animation<double> _horns;
+  late final Animation<double> _head;
+  late final Animation<double> _body;
+  late final Animation<double> _limbs;
 
   @override
   void initState() {
     super.initState();
-    shadowController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
-    logoController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
-    logoTopController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
-    androidTopController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
-    strokeController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
-    fadeController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3));
-    filledController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
-    logoAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(logoController!);
-    shadowAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(shadowController!);
 
-    Timer(Duration(seconds: 1), () {
-      logoController!.forward();
-      shadowController!.forward();
-    });
-    logoController!.addListener(() {
-      if (logoAnimation!.value == 1) {
-        logoTopController!.forward();
-        logoTopAnimation =
-            Tween<double>(begin: 0.0, end: 1.0).animate(logoTopController!);
-      }
-      setState(() {});
-    });
-    logoTopController!.addListener(() {
-      if (logoTopAnimation!.value == 1) {
-        androidTopController!.forward();
-        androidTopAnimation =
-            Tween<double>(begin: 0.0, end: 1.0).animate(androidTopController!);
-      }
-      setState(() {});
-    });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..forward();
 
-    androidTopController!.addListener(() {
-      if (androidTopAnimation!.value == 1) {
-        strokeController!.forward();
-        strokeAnimation =
-            Tween<double>(begin: 0.0, end: 1.0).animate(strokeController!);
-      }
-      setState(() {});
-    });
+    // Quick fade-in for shadows/accent first.
+    _shadow = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.18, curve: Curves.easeOut),
+    );
 
-    strokeController!.addListener(() {
-      if (strokeAnimation!.value == 1) {
-        fadeController!.forward();
-        fadeAnimation =
-            Tween<double>(begin: 0.0, end: 1.0).animate(fadeController!);
-      }
-      setState(() {});
-    });
-    shadowController!.addListener(() {
-      setState(() {});
-    });
-    fadeController!.addListener(() {
-      if (fadeAnimation!.value > 0.5) {
-        filledController!.forward();
-        filledAnimation =
-            Tween<double>(begin: 0.0, end: 1000.0).animate(filledController!);
-      }
-      setState(() {});
-    });
-    filledController!.addListener(() {
-      setState(() {});
-    });
+    // Draw horns early.
+    _horns = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.10, 0.35, curve: Curves.easeOutCubic),
+    );
+
+    // Head dome.
+    _head = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.30, 0.60, curve: Curves.easeInOutCubic),
+    );
+
+    // Body.
+    _body = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.52, 0.80, curve: Curves.easeInOutCubic),
+    );
+
+    // Limbs last.
+    _limbs = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.70, 1.0, curve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -118,15 +77,20 @@ class _AndroidHomeState extends State<AndroidHome>
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 5.0, top: 100.0),
-        child: CustomPaint(
-          child: Container(),
-          painter: AndroidLogoPainter(
-            cupProgress: logoAnimation!.value,
-            coverProgress: logoTopAnimation?.value ?? 0,
-            coverTopProgress: androidTopAnimation?.value ?? 0,
-            strawProgress: strokeAnimation?.value ?? 0,
-            shadowProgress: shadowAnimation?.value ?? 0,
-          ),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return CustomPaint(
+              painter: AndroidLogoPainter(
+                shadowProgress: _shadow.value,
+                hornProgress: _horns.value,
+                headProgress: _head.value,
+                bodyProgress: _body.value,
+                limbsProgress: _limbs.value,
+              ),
+              child: const SizedBox.expand(),
+            );
+          },
         ),
       ),
     );
@@ -134,154 +98,164 @@ class _AndroidHomeState extends State<AndroidHome>
 }
 
 class AndroidLogoPainter extends CustomPainter {
-  final double? cupProgress;
-  final double? coverProgress;
-  final double? coverTopProgress;
-  final double? strawProgress;
-  final double? shadowProgress;
+  final double shadowProgress;
+  final double hornProgress;
+  final double headProgress;
+  final double bodyProgress;
+  final double limbsProgress;
 
   AndroidLogoPainter({
-    this.cupProgress,
-    this.coverProgress,
-    this.coverTopProgress,
-    this.strawProgress,
-    this.shadowProgress,
+    required this.shadowProgress,
+    required this.hornProgress,
+    required this.headProgress,
+    required this.bodyProgress,
+    required this.limbsProgress,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final eyesPaint = Paint()..color = Colors.white;
 
-    final hornPaint = Paint()
+    final accentColor = Colors.greenAccent[700] ?? Colors.greenAccent;
+
+    final outlinePaint = Paint()
       ..strokeWidth = 5
-      ..color = Colors.greenAccent[700]!
-      ..style = PaintingStyle.stroke;
+      ..color = accentColor
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
 
-    final curvesPaint = Paint()
+    // Fill kicks in near the end for a nicer "finished" look.
+    final isFilled = limbsProgress >= 0.98;
+    final mainPaint = Paint()
       ..strokeWidth = 5
-      ..color = Colors.greenAccent[700]!
-      ..style =
-          strawProgress == 1.0 ? PaintingStyle.fill : PaintingStyle.stroke;
+      ..color = accentColor
+      ..style = isFilled ? PaintingStyle.fill : PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
 
-    //android horn
-    final horn = Path();
-    horn.moveTo(75, 0);
-    horn.relativeLineTo(50, 60);
-    // canvas.drawPath(horn, hornPaint);
-    animatePath(horn, hornPaint, canvas, shadowProgress!);
+    // --- horns ---
+    final horn1 = Path()
+      ..moveTo(75, 0)
+      ..relativeLineTo(50, 60);
+    _drawTrimmedPath(canvas, horn1, outlinePaint, hornProgress);
 
-    //android second horn
-    final horn2 = Path();
-    horn2.moveTo(290, 65);
-    horn2.relativeLineTo(50, -65);
-    // canvas.drawPath(horn2, hornPaint);
-    animatePath(horn2, hornPaint, canvas, shadowProgress!);
+    final horn2 = Path()
+      ..moveTo(290, 65)
+      ..relativeLineTo(50, -65);
+    _drawTrimmedPath(canvas, horn2, outlinePaint, hornProgress);
 
-    //android logo head
-    final _path1 = Path()
+    // --- head ---
+    final head = Path()
       ..moveTo(size.width / 5.5, 150)
-      ..relativeCubicTo(50 - 15, -175, 250, -130, 250, -0)
+      ..relativeCubicTo(35, -175, 250, -130, 250, 0)
       ..close();
-    // canvas.drawPath(_path1, curvesPaint);
-    animatePath(_path1, curvesPaint, canvas, coverProgress!);
+    _drawTrimmedPath(canvas, head, mainPaint, headProgress);
 
-    //android eyes
-    canvas.drawCircle(const Offset(145.0, 90.0), 10, eyesPaint);
-    //android second eyes
-    canvas.drawCircle(const Offset(275.0, 90.0), 10, eyesPaint);
-
-    //android logo body
-    final _path2 = Path();
-    _path2.moveTo(size.width / 5.5, 155);
-    _path2.relativeLineTo(250, 0);
-    _path2.relativeLineTo(0, 180);
-    _path2.relativeLineTo(-250, 0);
-    _path2.close();
-    // canvas.drawPath(_path2, curvesPaint);
-    animatePath(_path2, curvesPaint, canvas, coverTopProgress!);
-
-    //android first hand
-    final hand = Path();
-    hand.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          size.width / 1.25,
-          size.height / 6,
-          size.width / 8,
-          size.height / 5,
-        ),
-        const Radius.circular(50),
-      ),
+    // eyes (fade in with shadowProgress)
+    final eyeAlpha = (255 * shadowProgress).clamp(0, 255).toInt();
+    canvas.drawCircle(
+      const Offset(145.0, 90.0),
+      10,
+      eyesPaint..color = Colors.white.withAlpha(eyeAlpha),
     );
-    // canvas.drawPath(hand, curvesPaint);
-    animatePath(hand, curvesPaint, canvas, strawProgress!);
-
-    //android second hand
-    final hand2 = Path();
-    hand2.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          size.width / 30,
-          size.height / 6,
-          size.width / 8,
-          size.height / 5,
-        ),
-        const Radius.circular(50),
-      ),
+    canvas.drawCircle(
+      const Offset(275.0, 90.0),
+      10,
+      eyesPaint..color = Colors.white.withAlpha(eyeAlpha),
     );
-    // canvas.drawPath(hand2, curvesPaint);
-    animatePath(hand2, curvesPaint, canvas, strawProgress!);
 
-    //android first leg
-    Path _path3 = Path();
-    _path3.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          size.width / 1.65,
-          size.height / 2.5,
-          size.width / 8,
-          size.height / 5,
-        ),
-        const Radius.circular(50),
-      ),
-    );
-    // canvas.drawPath(_path3, curvesPaint);
-    animatePath(_path3, curvesPaint, canvas, strawProgress!);
+    // --- body ---
+    final body = Path()
+      ..moveTo(size.width / 5.5, 155)
+      ..relativeLineTo(250, 0)
+      ..relativeLineTo(0, 180)
+      ..relativeLineTo(-250, 0)
+      ..close();
+    _drawTrimmedPath(canvas, body, mainPaint, bodyProgress);
 
-    //android second leg
-    Path _path4 = Path();
-    _path4.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          size.width / 4.5,
-          size.height / 2.5,
-          size.width / 8,
-          size.height / 5,
+    // --- limbs ---
+    final handRight = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            size.width / 1.25,
+            size.height / 6,
+            size.width / 8,
+            size.height / 5,
+          ),
+          const Radius.circular(50),
         ),
-        const Radius.circular(50),
-      ),
-    );
-    animatePath(_path4, curvesPaint, canvas, strawProgress!);
+      );
+    _drawTrimmedPath(canvas, handRight, mainPaint, limbsProgress);
+
+    final handLeft = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            size.width / 30,
+            size.height / 6,
+            size.width / 8,
+            size.height / 5,
+          ),
+          const Radius.circular(50),
+        ),
+      );
+    _drawTrimmedPath(canvas, handLeft, mainPaint, limbsProgress);
+
+    final legRight = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            size.width / 1.65,
+            size.height / 2.5,
+            size.width / 8,
+            size.height / 5,
+          ),
+          const Radius.circular(50),
+        ),
+      );
+    _drawTrimmedPath(canvas, legRight, mainPaint, limbsProgress);
+
+    final legLeft = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            size.width / 4.5,
+            size.height / 2.5,
+            size.width / 8,
+            size.height / 5,
+          ),
+          const Radius.circular(50),
+        ),
+      );
+    _drawTrimmedPath(canvas, legLeft, mainPaint, limbsProgress);
   }
 
+  void _drawTrimmedPath(
+    Canvas canvas,
+    Path path,
+    Paint paint,
+    double progress,
+  ) {
+    final p = progress.clamp(0.0, 1.0);
+    for (final metric in path.computeMetrics()) {
+      final extract = metric.extractPath(0.0, metric.length * p);
+      canvas.drawPath(extract, paint);
+    }
+  }
+
+  // Kept for compatibility if other demos used it (currently unused here).
   double degreesToRadians(double degrees) {
     return (degrees * math.pi) / 180;
   }
 
-  //animate the drawn path
-  animatePath(Path path, Paint paint, Canvas canvas, double progress) {
-    PathMetrics shadowMetrics = path.computeMetrics();
-    for (PathMetric pathMetric in shadowMetrics) {
-      Path extractPath = pathMetric.extractPath(
-        0.0,
-        pathMetric.length * progress,
-      );
-      canvas.drawPath(extractPath, paint);
-    }
-  }
-
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  bool shouldRepaint(covariant AndroidLogoPainter oldDelegate) {
+    return oldDelegate.shadowProgress != shadowProgress ||
+        oldDelegate.hornProgress != hornProgress ||
+        oldDelegate.headProgress != headProgress ||
+        oldDelegate.bodyProgress != bodyProgress ||
+        oldDelegate.limbsProgress != limbsProgress;
   }
 }

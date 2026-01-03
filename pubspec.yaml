@@ -44,6 +44,7 @@ dependencies:
   wave: ^0.2.2
   flutter_compass: ^0.8.0
   file: ^7.0.0
+  image_picker: ^0.8.7+4
   percent_indicator: ^4.2.3
 
 dev_dependencies:
@@ -62,6 +63,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
