@@ -33,10 +33,6 @@ import 'model/demo.dart';
 
 /// Single place where demos are registered.
 ///
-/// Keep these entries small and stable so adding a new demo is straightforward:
-/// 1) create demo widget
-/// 2) add an entry here
-/// 3) (optional) add screenshot + tags
 class DemoRegistry {
   DemoRegistry._();
 
@@ -74,10 +70,11 @@ class DemoRegistry {
         builder: _draggableSquares,
         tags: ['gesture']),
     Demo(
-        id: 'duolingo',
-        title: 'Duolingo',
-        builder: _duolingo,
-        tags: ['custom_paint']),
+      id: 'duolingo',
+      title: 'Duolingo',
+      builder: _duolingo,
+      tags: ['custom_paint'],
+    ),
     Demo(id: 'compass', title: 'Compass', builder: _compass, tags: ['sensor']),
     Demo(
         id: 'flutter_dash',

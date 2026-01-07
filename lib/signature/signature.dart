@@ -2,9 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-// Note: this file is used as a demo page inside the main app catalog.
-// Avoid defining a separate `main()` or `MaterialApp` here.
-
 class SignatureAnimation extends StatefulWidget {
   const SignatureAnimation({super.key});
 
@@ -78,7 +75,7 @@ class SignaturePainter extends CustomPainter {
     final h = size.height;
     final path = Path();
     
-    // --- Subpath 1: Left Base Segment ---
+    //Left Base Segment
     path.moveTo(0.24829*w, 0.85103*h);
     path.lineTo(0.02337*w, 0.85103*h);
     path.cubicTo(0.0105*w, 0.85103*h, 0, 0.83889*h, 0, 0.82403*h);
@@ -87,7 +84,7 @@ class SignaturePainter extends CustomPainter {
     path.cubicTo(0.25605*w, 0.81583*h, 0.25103*w, 0.83392*h, 0.24829*w, 0.85103*h);
     path.close();
 
-    // --- Subpath 2: Middle Base Segment ---
+    // Middle Base Segment
     path.moveTo(0.45619*w, 0.85103*h);
     path.lineTo(0.293*w, 0.85103*h);
     path.cubicTo(0.29592*w, 0.83433*h, 0.30155*w, 0.81615*h, 0.30966*w, 0.79733*h);
@@ -95,7 +92,7 @@ class SignaturePainter extends CustomPainter {
     path.cubicTo(0.4723*w, 0.81684*h, 0.46461*w, 0.83485*h, 0.45619*w, 0.85103*h);
     path.close();
 
-    // --- Subpath 3: Right Base Segment ---
+    // Right Base Segment 
     path.moveTo(0.99842*w, 0.82403*h);
     path.cubicTo(0.99842*w, 0.83889*h, 0.98792*w, 0.85103*h, 0.97505*w, 0.85103*h);
     path.lineTo(0.50655*w, 0.85103*h);
@@ -104,7 +101,7 @@ class SignaturePainter extends CustomPainter {
     path.cubicTo(0.98792*w, 0.79733*h, 0.99842*w, 0.80947*h, 0.99842*w, 0.82403*h);
     path.close();
 
-    // --- Subpath 4: The 'X' ---
+    // The 'X' 
     path.moveTo(0.04123*w, 0.53975*h);
     path.lineTo(0.08574*w, 0.59094*h);
     path.lineTo(0.13025*w, 0.53975*h);
@@ -124,7 +121,7 @@ class SignaturePainter extends CustomPainter {
     path.cubicTo(0.02206*w, 0.53095*h, 0.03361*w, 0.53095*h, 0.04123*w, 0.53975*h);
     path.close();
 
-    // --- Subpath 5: The Signature flourish ---
+    // The Signature flourish 
     path.moveTo(0.33456*w, 0.99787*h);
     path.cubicTo(0.47216*w, 0.99787*h, 0.56329*w, 0.79612*h, 0.56329*w, 0.53883*h);
     path.cubicTo(0.56329*w, 0.31826*h, 0.47794*w, 0.14411*h, 0.34454*w, 0.14411*h);
@@ -162,7 +159,7 @@ class SignaturePainter extends CustomPainter {
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..shader = LinearGradient(
+      ..shader = const LinearGradient(
         colors: [Colors.red, Colors.blue, Colors.green],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
